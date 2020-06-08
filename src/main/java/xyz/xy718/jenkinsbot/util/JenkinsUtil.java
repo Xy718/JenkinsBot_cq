@@ -15,7 +15,7 @@ import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONException;
 
 public class JenkinsUtil {
-    public static String getLastJob() throws JSONException, IOException, ParseException{
+    public static String getLastJob(){
         String xml=HttpUtil.get("https://jenkins.xy718.xyz/job/CatislandWeb/view/default/rssLatest");
         Document docResult=XmlUtil.readXML(xml);
         String ret="最近的一次构建：";
@@ -25,11 +25,16 @@ public class JenkinsUtil {
         ret+="构建完成时间:"+ UTCToCST(XmlUtil.getByXPath("//feed/updated", docResult, XPathConstants.STRING).toString())+"\r\n";
         return ret;
     }
-    public static String UTCToCST(String UTCStr) throws ParseException {
+    public static String UTCToCST(String UTCStr){
         Date date = null;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        date = sdf.parse(UTCStr);
+        try {
+			date = sdf.parse(UTCStr);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.set(Calendar.HOUR, calendar.get(Calendar.HOUR) + 8);
